@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Web Interface with AJAX</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            color: #333;
+            text-align: center;
+            margin: 40px 0;
+            font-weight: 700;
+        }
+
+        .section-container {
+            margin-top: 30px;
+        }
+
+        .form-container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .form-container h3 {
+            font-size: 1.8em;
+            color: #4CAF50;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* Input Styles */
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0 15px 0;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: #f9f9f9;
+        }
+
+        input[type="text"], input[type="email"], input[type="number"], select {
+            background-color: #fff;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background-color: #f1fdf7;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table th, table td {
+            padding: 15px;
+            text-align: left;
+            font-size: 16px;
+            color: #555;
+        }
+
+        table th {
+            background-color: #4CAF50;
+            color: white;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        table td {
+            background-color: #ffffff;
+            border-top: 1px solid #f1f1f1;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Table Action Button */
+        .action-button {
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 6px;
+            background-color: #ff6b6b;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+        .action-button:hover {
+            background-color: #e74c3c;
+        }
+
+        /* Loading Indicator */
+        #loading {
+            text-align: center;
+            color: #4CAF50;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Dynamic Web Interface</h1>
+
+    <!-- User Info Section -->
+    <div class="section-container">
+        <div class="form-container">
+            <h3>User Info</h3>
+            <form id="userForm">
+                <input type="text" id="fname" placeholder="Enter First Name" required><br>
+                <input type="text" id="lname" placeholder="Enter Last Name" required><br>
+                <input type="email" id="email" placeholder="Enter Email" required><br>
+                <input type="text" id="phone_number" placeholder="Enter Phone Number" required><br>
+                <input type="text" id="address" placeholder="Enter Address" required><br>
+                <input type="text" id="city" placeholder="Enter City" required><br>
+                <input type="text" id="postal_code" placeholder="Enter Postal Code" required><br>
+                <button type="submit">Add User</button>
+            </form>
+        </div>
+        <h2>Users List</h2>
+        <div id="loading" style="display:none;">Loading...</div>
+        <table id="usersTable">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>fname</th>
+                    <th>lname</th>
+                    <th>email</th>
+                    <th>phone_number</th>
+                    <th>address</th>
+                    <th>city</th>
+                    <th>postal_code</th>
+                    <th>actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Student Info Section -->
+    <div class="section-container">
+        <div class="form-container">
+            <h3>Student Info</h3>
+            <form id="studentForm">
+                <input type="text" id="student_fname" placeholder="Enter First Name" required><br>
+                <input type="text" id="student_lname" placeholder="Enter Last Name" required><br>
+                <input type="email" id="student_email" placeholder="Enter Email" required><br>
+                <input type="text" id="student_number" placeholder="Enter Student Number" required><br>
+                <input type="text" id="section" placeholder="Enter Section" required><br>
+                <button type="submit">Add Student</button>
+            </form>
+        </div>
+        <h2>Students List</h2>
+        <table id="studentsTable">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>fname</th>
+                    <th>lname</th>
+                    <th>email</th>
+                    <th>student_number</th>
+                    <th>section</th>
+                    <th>actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Movie Info Section -->
+    <div class="section-container">
+        <div class="form-container">
+            <h3>Movie Info</h3>
+            <form id="movieForm">
+                <input type="text" id="movie_title" placeholder="Enter Movie Title" required><br>
+                <input type="text" id="movie_genre" placeholder="Enter Genre" required><br>
+                <input type="date" id="release_date" placeholder="Enter Release Date" required><br>
+                <button type="submit">Add Movie</button>
+            </form>
+        </div>
+        <h2>Movies List</h2>
+        <table id="moviesTable">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>title</th>
+                    <th>genre</th>
+                    <th>release_date</th>
+                    <th>actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Product Info Section -->
+    <div class="section-container">
+        <div class="form-container">
+            <h3>Product Info</h3>
+            <form id="productForm">
+                <input type="text" id="product_name" placeholder="Enter Product Name" required><br>
+                <input type="text" id="product_description" placeholder="Enter Product Description" required><br>
+                <input type="number" id="product_price" placeholder="Enter Product Price" required><br>
+                <button type="submit">Add Product</button>
+            </form>
+        </div>
+        <h2>Products List</h2>
+        <table id="productsTable">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>product_name</th>
+                    <th>description</th>
+                    <th>product_price</th>
+                    <th>actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        const API_URL_USERS = "https://finalproject.site/api/v1/users";
+        const API_URL_STUDENTS = "https://finalproject.site/api/v1/students";
+        const API_URL_MOVIES = "https://finalproject.site/api/v1/movies";
+        const API_URL_PRODUCTS = "https://finalproject.site/api/v1/products";
+
+        // Fetch and Display Users
+        function fetchUsers() {
+            fetch(API_URL_USERS)
+                .then(response => response.json())
+                .then(data => {
+                    const userList = document.getElementById("usersTable").getElementsByTagName("tbody")[0];
+                    userList.innerHTML = "";
+                    data.forEach(user => {
+                        userList.innerHTML += `
+                            <tr>
+                                <td>${user.id}</td>
+                                <td>${user.fname}</td>
+                                <td>${user.lname}</td>
+                                <td>${user.email}</td>
+                                <td>${user.phone_number}</td>
+                                <td>${user.address}</td>
+                                <td>${user.city}</td>
+                                <td>${user.postal_code}</td>
+                                <td>
+                                    <button class="action-button" onclick="editUser(${user.id})">Edit</button>
+                                    <button class="action-button" onclick="deleteUser(${user.id})">Delete</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                })
+                .catch(error => console.error("Error fetching users:", error));
+        }
+
+        // Fetch and Display Students
+        function fetchStudents() {
+            fetch(API_URL_STUDENTS)
+                .then(response => response.json())
+                .then(data => {
+                    const studentList = document.getElementById("studentsTable").getElementsByTagName("tbody")[0];
+                    studentList.innerHTML = "";
+                    data.forEach(student => {
+                        studentList.innerHTML += `
+                            <tr>
+                                <td>${student.id}</td>
+                                <td>${student.fname}</td>
+                                <td>${student.lname}</td>
+                                <td>${student.email}</td>
+                                <td>${student.student_number}</td>
+                                <td>${student.section}</td>
+                                <td>
+                                    <button class="action-button" onclick="editStudent(${student.id})">Edit</button>
+                                    <button class="action-button" onclick="deleteStudent(${student.id})">Delete</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                })
+                .catch(error => console.error("Error fetching students:", error));
+        }
+
+        // Fetch and Display Movies
+        function fetchMovies() {
+            fetch(API_URL_MOVIES)
+                .then(response => response.json())
+                .then(data => {
+                    const movieList = document.getElementById("moviesTable").getElementsByTagName("tbody")[0];
+                    movieList.innerHTML = "";
+                    data.forEach(movie => {
+                        movieList.innerHTML += `
+                            <tr>
+                                <td>${movie.id}</td>
+                                <td>${movie.title}</td>
+                                <td>${movie.genre}</td>
+                                <td>${movie.release_date}</td>
+                                <td>
+                                    <button class="action-button" onclick="editMovie(${movie.id})">Edit</button>
+                                    <button class="action-button" onclick="deleteMovie(${movie.id})">Delete</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                })
+                .catch(error => console.error("Error fetching movies:", error));
+        }
+
+        // Fetch and Display Products
+        function fetchProducts() {
+            fetch(API_URL_PRODUCTS)
+                .then(response => response.json())
+                .then(data => {
+                    const productList = document.getElementById("productsTable").getElementsByTagName("tbody")[0];
+                    productList.innerHTML = "";
+                    data.forEach(product => {
+                        productList.innerHTML += `
+                            <tr>
+                                <td>${product.id}</td>
+                                <td>${product.product_name}</td>
+                                <td>${product.description}</td>
+                                <td>${product.product_price}</td>
+                                <td>
+                                    <button class="action-button" onclick="editProduct(${product.id})">Edit</button>
+                                    <button class="action-button" onclick="deleteProduct(${product.id})">Delete</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                })
+                .catch(error => console.error("Error fetching products:", error));
+        }
+
+        // Delete User
+        function deleteUser(id) {
+            fetch(`${API_URL_USERS}/${id}`, { method: "DELETE" })
+                .then(response => {
+                    if (response.ok) {
+                        alert("User deleted successfully");
+                        fetchUsers(); // Refresh list
+                    } else {
+                        alert("Error deleting user");
+                    }
+                })
+                .catch(error => console.error("Error deleting user:", error));
+        }
+
+        // Delete Student
+        function deleteStudent(id) {
+            fetch(`${API_URL_STUDENTS}/${id}`, { method: "DELETE" })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Student deleted successfully");
+                        fetchStudents(); // Refresh list
+                    } else {
+                        alert("Error deleting student");
+                    }
+                })
+                .catch(error => console.error("Error deleting student:", error));
+        }
+
+        // Delete Movie
+        function deleteMovie(id) {
+            fetch(`${API_URL_MOVIES}/${id}`, { method: "DELETE" })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Movie deleted successfully");
+                        fetchMovies(); // Refresh list
+                    } else {
+                        alert("Error deleting movie");
+                    }
+                })
+                .catch(error => console.error("Error deleting movie:", error));
+        }
+
+        // Delete Product
+        function deleteProduct(id) {
+            fetch(`${API_URL_PRODUCTS}/${id}`, { method: "DELETE" })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Product deleted successfully");
+                        fetchProducts(); // Refresh list
+                    } else {
+                        alert("Error deleting product");
+                    }
+                })
+                .catch(error => console.error("Error deleting product:", error));
+        }
+
+        // Add or Edit Users
+        document.getElementById("userForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const user = {
+                fname: document.getElementById("fname").value,
+                lname: document.getElementById("lname").value,
+                email: document.getElementById("email").value,
+                phone_number: document.getElementById("phone_number").value,
+                address: document.getElementById("address").value,
+                city: document.getElementById("city").value,
+                postal_code: document.getElementById("postal_code").value,
+            };
+
+            fetch(API_URL_USERS, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(user),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert("User saved successfully");
+                    fetchUsers(); // Refresh users list
+                    document.getElementById("userForm").reset(); // Reset the form
+                })
+                .catch(error => console.error("Error saving user:", error));
+        });
+
+        // Add or Edit Students
+        document.getElementById("studentForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const student = {
+                fname: document.getElementById("student_fname").value,
+                lname: document.getElementById("student_lname").value,
+                email: document.getElementById("student_email").value,
+                student_number: document.getElementById("student_number").value,
+                section: document.getElementById("section").value,
+            };
+
+            fetch(API_URL_STUDENTS, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(student),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert("Student saved successfully");
+                    fetchStudents(); // Refresh students list
+                    document.getElementById("studentForm").reset(); // Reset the form
+                })
+                .catch(error => console.error("Error saving student:", error));
+        });
+
+        // Add or Edit Movies
+        document.getElementById("movieForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const movie = {
+                title: document.getElementById("movie_title").value,
+                genre: document.getElementById("movie_genre").value,
+                release_date: document.getElementById("release_date").value,
+            };
+
+            fetch(API_URL_MOVIES, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(movie),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert("Movie saved successfully");
+                    fetchMovies(); // Refresh movies list
+                    document.getElementById("movieForm").reset(); // Reset the form
+                })
+                .catch(error => console.error("Error saving movie:", error));
+        });
+
+        // Add or Edit Products
+        document.getElementById("productForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const product = {
+                product_name: document.getElementById("product_name").value,
+                description: document.getElementById("product_description").value,
+                product_price: document.getElementById("product_price").value,
+            };
+
+            fetch(API_URL_PRODUCTS, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(product),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert("Product saved successfully");
+                    fetchProducts(); // Refresh products list
+                    document.getElementById("productForm").reset(); // Reset the form
+                })
+                .catch(error => console.error("Error saving product:", error));
+        });
+
+        // Call fetch functions on page load
+        window.onload = function () {
+            fetchUsers();
+            fetchStudents();
+            fetchMovies();
+            fetchProducts();
+        };
+    </script>
+
+</body>
+</html>
